@@ -13,7 +13,7 @@ JspOut1_OFF;
 JspOut2_OFF;
 //SW_PWM1_OFF;
   
-JspOut0_ON;  
+//JspOut0_ON;  
   
  GPIO_DeInit(GPIOD);
 

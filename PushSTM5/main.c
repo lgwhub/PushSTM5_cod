@@ -154,24 +154,36 @@ uchar xxx;
 			temp16=AdcBuf[0];	//电流  左对齐，取高位
 			if(FlagSetCurrent1==2)
 					{//10A,显示50
-				if(temp16>25)		//相当于RATE<256
+//				if(temp16>25)		//相当于RATE<256
+//							{
+//							xxx=10*5*128/(temp16);
+//							if  (xxx>60)	//相当于temp16<
+//										{
+//										gpParam->bCurrentRate=(uchar)xxx;
+//										FlagSetCurrent1=3;
+//										}
+//							}
+							
+				if(temp16>8)		//相当于RATE<256
 							{
-							xxx=10*5*128/(temp16);
-							if  (xxx>60)	//相当于temp16<
+							xxx=10*5*32/(temp16);
+							if  (xxx>25)	//相当于temp16<
 										{
 										gpParam->bCurrentRate=(uchar)xxx;
 										FlagSetCurrent1=3;
 										}
-							}
+							}							
+							
 						}			
 			
 			/*
 			if (temp16>(65535/330))temp16=(65535/330);
 			chAdc_Resoult7 = (uchar)((temp16*330)>>8);
 		*/
-				if (temp16>(32768/gpParam->bCurrentRate))temp16=(32768/gpParam->bCurrentRate);
-			chAdc_Resoult7 = (uchar)((temp16*gpParam->bCurrentRate)>>7);		//uint 200ma
-			
+				//if (temp16>(32768/gpParam->bCurrentRate))temp16=(32768/gpParam->bCurrentRate);
+			//chAdc_Resoult7 = (uchar)((temp16*gpParam->bCurrentRate)>>7);		//uint 200ma
+			if (temp16>(8192/gpParam->bCurrentRate))temp16=(8192/gpParam->bCurrentRate);
+			chAdc_Resoult7 = (uchar)((temp16*gpParam->bCurrentRate)>>5);		//uint 200ma	
 
 }
 
@@ -293,7 +305,7 @@ RstWdog();
 
 
 LedStart();   /* 启动时指示灯闪烁  */
-JspOut0_ON;
+//JspOut0_ON;
 		
 
 RstWdog();

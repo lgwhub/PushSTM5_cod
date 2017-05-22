@@ -544,6 +544,7 @@ void Execute(uchar cmd)
 					case REMOT_COMMAND_POWER_ON:
 					case REMOT_COMMAND_PUSH_POWER_ON:
 							Motor.FlagPower=150; //3分钟	
+							JspOut0_ON;
 					break;
 					
 					case REMOT_COMMAND_POWER_OFF:
@@ -561,6 +562,7 @@ void Execute(uchar cmd)
 								{
 								if((Motor.FlagRuning)&&(InputBuf==0x0f)&&(FlagInputZero>0))
 												{
+													JspOut0_ON;
 													Motor.FlagPower=150; //4分钟
 													FlagSetCurrent1=1;
 													TimeDebug=120;
@@ -873,23 +875,24 @@ void ProcessKey(uchar in,uchar old)
 				
 			#endif
 			
-			if( (in&BIT2)!=(old&BIT2) )	//是边沿K3 ,Set Current
+			if( (in&BIT2)!=(old&BIT2) )	//是边沿K3 ,debug  Set Current
 						{
 							if((in&BIT2)==0)
 										{
-										JspOut0_ON;	
-										TimeDebug=120;	
+										if(SetIdTime>0)
+												{	
+												TimeDebug=120;
+												
+												}	
 										ParamSend();	
-//											if(FlagSetCurrent1==0)	
-//												{
-//												
-//														if((Motor.FlagRuning)&&(InputBuf==0x0f)&&(FlagInputZero>0))
-//																{
-//																	FlagSetCurrent1=1;
-//																}
-//
-//												}
-										}
+									SetIdTime=0;
+									
+										//关闭
+										Motor.FlagRuning=0;
+										Motor.CommandType=0;
+										Motor.CurrentType=0;
+										FlagSetCurrent1=0;
+									}
 						}			
 			
 			if( (in&BIT4)!=(old&BIT4) )	//是边沿K5 SetId
@@ -1011,7 +1014,7 @@ static uchar tim1000ms;
 						}	
 						
 			if(Motor.FlagPower==1)
-					{
+					{//超时 关
 					JspOut0_OFF;			
 					}	
 								
@@ -1183,36 +1186,19 @@ void ProcessTimeSoftStart(void)	//10MS软启动
 		if(Motor.FlagRuning)
 		{
 			//软启动
-			//if(Motor.Pwm1<(PWM_MAX_VAL-1))Motor.Pwm1+=1;
 			if(Motor.Pwm1<(PWM_MAX_VAL-SoftStep))Motor.Pwm1+=SoftStep;
 			else Motor.Pwm1=PWM_MAX_VAL;
 			DropOffTime=0;	
 		}
 	else{
 
-			#define CONFIG_SOFT_STOP		0
-			
-			#if CONFIG_SOFT_STOP
-						if(Motor.Pwm1>(SoftStep*4))
-							{
-								Motor.Pwm1-=(SoftStep*4);	
-							}
-						else{
-							  Motor.Pwm1=0;	//直接停止
-							}
-				#else
-				Motor.Pwm1=0;	//直接停止
-				#endif			
-				
-		if(Motor.Pwm1==0)
-				{
+
+			Motor.Pwm1=0;	//直接停止
+
 				if(DropOffTime<253)DropOffTime++;//死区时间
-				//if(DropOffTime>10)AllJspOff();//继电器关
 				if(DropOffTime>30)AllJspOff();//继电器关	
-				}
-		 else{
-		 			DropOffTime=0;
-					}
+
+
 		}
 PwmContral1(Motor.Pwm1);	//OC1A PWM1 控制
 
