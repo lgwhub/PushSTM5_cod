@@ -44,10 +44,10 @@
 //电机正转顶紧的设定值，最大值为127  18A   max=256*75%=192
 
 //#define CURRENT_FORWARD	(85)
-#define CURRENT_FORWARD	(75)
+#define CURRENT_FORWARD	(82)
 //电机反转放松的设定值，最大值为127  16A
 //#define CURRENT_BACKWARD 78
-#define CURRENT_BACKWARD 72
+#define CURRENT_BACKWARD (86)
 //#define CURRENT_BACKWARD 75
 
 

@@ -193,21 +193,57 @@ void LedStart(void)   /* 启动时指示灯闪烁  */
 
 	uchar i;
 
+uchar y=3;
+
+if(gpParam->bCurrentRate==CURRENT_RATE)	//FlagParamInitnized;		//参数已经初始化标记
+	{
+		y=6;
+	}
+else {
+			y=3;
+			}
+///////////////////////////////////
 	for(i=0;i<3;i++)
 	{
 		
 		SetLed1;
 		ClrLed2;
-		ClrLed3;
 		
-		DelayMs(50);
+		DelayMs(20);
 		ClrLed1;
 		SetLed2;
-		SetLed3;
-		DelayMs(100);
+		DelayMs(50);
 		RstWdog();
 	}
+//////////////////////////////////	
+	for(i=0;i<3;i++)
+	{
+		
 
+		ClrLed3;
+		
+		DelayMs(20);
+
+		SetLed3;
+		DelayMs(30);
+		RstWdog();
+	}
+//////////////////////////////////	
+	for(i=0;i<y;i++)
+	{
+		
+		SetLed1;
+		ClrLed2;
+
+		
+		DelayMs(20);
+		ClrLed1;
+		SetLed2;
+
+		DelayMs(30);
+		RstWdog();
+	}	
+//////////////////////////////////////
 
 ClrLed1;
 ClrLed2;

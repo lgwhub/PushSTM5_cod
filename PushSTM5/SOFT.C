@@ -780,7 +780,7 @@ temp=Input4>>4;
 			
 			//反转
 			bExCurrentBackwardMax=((CURRENT_BACKWARD*InputBuf)>>4)+CURRENT_BACKWARD;			
-
+			//bExCurrentBackwardMax=CURRENT_BACKWARD*18/10;
 			//3/4=75%
 			//bExCurrentBackwardPer85=(uchar)((uint16)(bExCurrentBackwardMax*7)>>3);
 			bExCurrentBackwardPer85=(uchar)((uint16)(bExCurrentBackwardMax*3)>>2);
@@ -1119,9 +1119,8 @@ static uchar tim1000ms;
 													//333	Motor.TimePer94=0;
 													if(Motor.iTimePer85>0)Motor.iTimePer85--;
 													}
-											
-											//if((chAdc_Resoult7>bExCurrentBackwardMax)||(0*Motor.iTimePer85>Time10000Ms))
 											if((chAdc_Resoult7>bExCurrentBackwardMax)||(Motor.iTimePer85>Time10000Ms))
+											//if((chAdc_Resoult7>bExCurrentBackwardMax))
 												{
 													Motor.OverType1=2;		//过流的方向,转向
 													Motor.FlagRuning=0;
@@ -1141,15 +1140,17 @@ static uchar tim1000ms;
 																			//Motor.RunTime=MAX_RUN_TIME_sec-3;	//反转退到底后自动正转3秒
 																			Motor.timer_sec100=0;
 																			#if Config_Al_Box
-																			//if(KeybyteBuf&BIT3)	//K4_LVL
-																				if(K4_LVL)
-																				{//SetLed2
-																					Motor.RunTime=MAX_RUN_TIME_sec-15;	//反转退到底后自动正转0.8秒,准对新款铝合金箱体
-																					}
-																			else{//闭合
-																					//Motor.RunTime=MAX_RUN_TIME_sec-4;	//反转退到底后自动正转3秒
-																					Motor.RunTime=MAX_RUN_TIME_sec-40;	//反转退到底后自动正转3秒
-																					}	
+//
+//																				if(K4_LVL)
+//																					{//SetLed2
+//																					Motor.RunTime=MAX_RUN_TIME_sec-15;	//反转退到底后自动正转0.8秒,准对新款铝合金箱体
+//																					}
+//																			else{//闭合
+//																					Motor.RunTime=MAX_RUN_TIME_sec-40;	//反转退到底后自动正转3秒
+//																					}	
+																			
+																			Motor.RunTime=MAX_RUN_TIME_sec-20;	//介于铝铁之间		
+																					
 																			#else			
 																				//Motor.RunTime=MAX_RUN_TIME_sec-4;	//反转退到底后自动正转3秒
 																				Motor.RunTime=MAX_RUN_TIME_sec-40;	//反转退到底后自动正转3秒
