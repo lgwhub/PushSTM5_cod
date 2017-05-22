@@ -93,8 +93,8 @@ buf[7]=0x70;
 
 						len=8;
 						len		+=	MakeValAsc8("K",gpParam->bCurrentRate,",",&buf[len]);	//
-						len+=MakeValAsc8("I",gpParam->bCurrentForward,",",&buf[len]);
-						len+=MakeValAsc8("",gpParam->bCurrentBackward,",",&buf[len]);
+						len+=MakeValAsc8("I",CURRENT_FORWARD,",",&buf[len]);
+						len+=MakeValAsc8("",CURRENT_BACKWARD,",",&buf[len]);
 						len+=MakeValAsc8("F",cc1100regcfg[2],",",&buf[len]);
 						
 
@@ -621,60 +621,7 @@ void TIM4_Config(void)	//配置TIM4每1MS产生一个更新中断
 	TIM4_Cmd(ENABLE);
 }
 
-void LedContral(void)  /* 亮灭转换  */
-{
-	
-				if(Time_LedRecv_LED>0)
-						{
-							Time_LedRecv_LED--;
-							#if Config_Al_Box					
-								if(K4_LVL)
-										{
-											//SetLed2;	//跳线不连接表示铝箱体
-											LED_Fe_Box;  //信号时候暗
-										}
-							else{
-											//ClrLed2;	//跳线连接表示铁箱体
-											LED_Al_Box;  //信号时候亮
-									}
-							#endif
-										
-						}
-				else{
-							#if Config_Al_Box					
-								if(K4_LVL)
-										{
-											//SetLed2;	//跳线不连接表示铝箱体
-											LED_Al_Box;  //平常时候亮
-										}
-							else{
-											//ClrLed2;	//跳线连接表示铁箱体
-											LED_Fe_Box;  //平常时候暗
-									}
-							#endif					
-							//LED_RECV_OFF;	
-							}		
-						
-//#if CONFIG_433SG						
-//				if(Time_TestProc_LED1>0)
-//						{
-//							Time_TestProc_LED1--;
-//							if(Time_TestProc_LED1==0)
-//									{
-//										TestProc_LED1_OFF;	
-//									}
-//						}
-//				if(Time_TestProc_LED2>0)
-//						{
-//							Time_TestProc_LED2--;
-//							if(Time_TestProc_LED2==0)
-//										{
-//											TestProc_LED2_OFF;	
-//										}
-//						}
-//		
-//#endif
-}
+
 
 
 void Read_Param(uchar *buf)

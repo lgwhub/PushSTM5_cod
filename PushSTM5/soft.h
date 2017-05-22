@@ -127,6 +127,9 @@ typedef double               FP64;
 /**************************************************************************************************/
 extern uchar bTimeBase;
 
+#define LED_CURRENT_ON			SetLed3
+#define LED_CURRENT_OFF			ClrLed3
+
 
 #define LED_RUN_ON			SetLed2
 #define LED_RUN_OFF			ClrLed2
@@ -164,8 +167,8 @@ extern uchar bExCurrentBackwardMax;
 struct	struct_save
 {
 
-		uchar bCurrentForward;			//工作电流1(uint=0.2A)
-		uchar bCurrentBackward;			//工作电流2(uint=0.2A)
+		//uchar bCurrentForward;			//工作电流1(uint=0.2A)
+		//uchar bCurrentBackward;			//工作电流2(uint=0.2A)
 		uchar bCurrentRate;			//电流测量比例200-206-220(uint=0.2A)		
 		
 		#if CONFIG_433SG 

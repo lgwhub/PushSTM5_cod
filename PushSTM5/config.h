@@ -41,13 +41,12 @@
 //gpParam->bCurrentRate=CURRENT_RATE;			//电机3的 5A
 
 //电机正转顶紧的设定值，最大值为127  18A   max=256*75%=192
-//#define CURRENT_FORWARD	124			
-//#define CURRENT_FORWARD	(102)
-#define CURRENT_FORWARD	(85)
+
+//#define CURRENT_FORWARD	(85)
+#define CURRENT_FORWARD	(75)
 //电机反转放松的设定值，最大值为127  16A
-//#define CURRENT_BACKWARD 110	
-//#define CURRENT_BACKWARD 91
-#define CURRENT_BACKWARD 78
+//#define CURRENT_BACKWARD 78
+#define CURRENT_BACKWARD 72
 //#define CURRENT_BACKWARD 75
 
 

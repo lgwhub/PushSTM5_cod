@@ -287,13 +287,11 @@ void CheckUart(void)
 void Default_ParamInit(void)
 {	//gpParam参数结构的指针
 
-	//gpParam->bCurrentForward=90;			//电机正转的 18A   max=256*75%=192
-	//gpParam->bCurrentBackward=80;			//电机反转的 16A
-	//gpParam->bCurrentForward=124;			//电机正转的 18A   max=256*75%=192
-	//gpParam->bCurrentBackward=110;			//电机反转的 16A
-	gpParam->bCurrentForward=CURRENT_FORWARD;			//电机正转的 18A   max=256*75%=192
-	gpParam->bCurrentBackward=CURRENT_BACKWARD;			//电机反转的 16A
-	//	gpParam->bCurrentBackward=3;			//电机反转的 0.6A
+
+	//gpParam->bCurrentForward=CURRENT_FORWARD;			//电机正转的 18A   max=256*75%=192
+	//gpParam->bCurrentBackward=CURRENT_BACKWARD;			//电机反转的 16A
+
+
 	gpParam->bCurrentRate=CURRENT_RATE;			//电机3的 5A
 	
 	
@@ -520,9 +518,9 @@ void Execute(uchar cmd)
 					{
 					case REMOT_COMMAND_MOT3_CW:
 					
-					if(Motor.FlagPower>0)
+					if(Motor.FlagPower>3)
 									{
-									Motor.FlagPower=90; //3分钟
+									Motor.FlagPower=150; //3分钟
 									Motor.FlagRuning=0;
 									Motor.CommandType=COMMAND_C1;		//按第一路正转
 									FlagAuto=1;//非点动方式
@@ -532,9 +530,9 @@ void Execute(uchar cmd)
 					break;
 					
 					case REMOT_COMMAND_MOT3_CCW:
-					if(Motor.FlagPower>0)
+					if(Motor.FlagPower>3)
 							{
-							Motor.FlagPower=90; //3分钟	
+							Motor.FlagPower=150; //3分钟	
 							Motor.FlagRuning=0;
 							Motor.CommandType=COMMAND_CC1;		//按第一路反转
 							FlagAuto=1;//非点动方式
@@ -545,14 +543,15 @@ void Execute(uchar cmd)
 												
 					case REMOT_COMMAND_POWER_ON:
 					case REMOT_COMMAND_PUSH_POWER_ON:
-							Motor.FlagPower=90; //3分钟	
+							Motor.FlagPower=150; //3分钟	
 					break;
 					
 					case REMOT_COMMAND_POWER_OFF:
 																Motor.FlagPower=0;
 																Motor.FlagRuning=0;
 																Motor.CommandType=0;
-																Motor.CurrentType=0;													
+																Motor.CurrentType=0;
+																JspOut0_OFF;													
 					break;
 				case REMOT_COMMAND_SET_RATE3:	//设置电流
 
@@ -562,7 +561,7 @@ void Execute(uchar cmd)
 								{
 								if((Motor.FlagRuning)&&(InputBuf==0x0f)&&(FlagInputZero>0))
 												{
-													Motor.FlagPower=90; //4分钟
+													Motor.FlagPower=150; //4分钟
 													FlagSetCurrent1=1;
 													TimeDebug=120;
 												}
@@ -582,7 +581,7 @@ void Execute(uchar cmd)
 					//遥控器电源开着
 					case REMOT_COMMAND_REMOT_HAND_ON:
 															
-							Motor.FlagPower=90; //4分钟
+							Motor.FlagPower=150; //4分钟
 															
 					break;
 					}
@@ -631,8 +630,9 @@ uchar cmd;
 				
 
 						Write_Param();				
-			
-				Motor.FlagPower=90; //3分钟
+						
+				JspOut0_ON;
+				Motor.FlagPower=150; //3分钟
 				SetIdTime=0;
 		
 				}
@@ -770,16 +770,18 @@ temp=Input4>>4;
 		if(Motor.FlagRuning==0)
 			{
 			//正转	(1+adj*2/45)*100%   adj=0-15
-			bExCurrentForwardMax=(gpParam->bCurrentForward<<1)*InputBuf/30+gpParam->bCurrentForward;
+			bExCurrentForwardMax=((CURRENT_FORWARD*InputBuf)>>4)+CURRENT_FORWARD;
 
-			bExCurrentForwardPer85=(uchar)((uint16)(bExCurrentForwardMax)*7>>3);
+			//bExCurrentForwardPer85=(uchar)((uint16)(bExCurrentForwardMax)*7>>3);
+			bExCurrentForwardPer85=(uchar)((uint16)(bExCurrentForwardMax)*3>>2);
 			//15/16=93.75%
 			
 			//反转
-			bExCurrentBackwardMax=(gpParam->bCurrentBackward<<1)*InputBuf/30+gpParam->bCurrentBackward;			
+			bExCurrentBackwardMax=((CURRENT_BACKWARD*InputBuf)>>4)+CURRENT_BACKWARD;			
 
 			//3/4=75%
-			bExCurrentBackwardPer85=(uchar)((uint16)(bExCurrentBackwardMax*7)>>3);
+			//bExCurrentBackwardPer85=(uchar)((uint16)(bExCurrentBackwardMax*7)>>3);
+			bExCurrentBackwardPer85=(uchar)((uint16)(bExCurrentBackwardMax*3)>>2);
 			//15/16=93.75%
 		}
 		
@@ -797,6 +799,22 @@ void ProcessKey(uchar in,uchar old)
 							{
 								Motor.FlagRuning=0;
 							Motor.CommandType=COMMAND_C1;		//按第一路正转
+							
+							///////////////////////////////
+							JspOut0_ON;
+							Motor.FlagPower=150; //4分钟
+											
+											if(FlagSetCurrent1==0)	
+												{
+												
+														if(TimeDebug>0)
+																{
+																	FlagSetCurrent1=1;
+																}
+
+												}
+							///////////////////////
+							
 							FlagAuto=1;//非点动方式
 							
 							//333	Motor.TimePer94=0;
@@ -859,17 +877,18 @@ void ProcessKey(uchar in,uchar old)
 						{
 							if((in&BIT2)==0)
 										{
-										TimeDebug=30;	
+										JspOut0_ON;	
+										TimeDebug=120;	
 										ParamSend();	
-											if(FlagSetCurrent1==0)	
-												{
-												
-														if((Motor.FlagRuning)&&(InputBuf==0x0f)&&(FlagInputZero>0))
-																{
-																	FlagSetCurrent1=1;
-																}
-
-												}
+//											if(FlagSetCurrent1==0)	
+//												{
+//												
+//														if((Motor.FlagRuning)&&(InputBuf==0x0f)&&(FlagInputZero>0))
+//																{
+//																	FlagSetCurrent1=1;
+//																}
+//
+//												}
 										}
 						}			
 			
@@ -990,6 +1009,12 @@ static uchar tim1000ms;
 							SendToRemot(REMOT_COMMAND_PUSH_POWER_ON);
 							Motor.FlagPower--;//每2秒减1
 						}	
+						
+			if(Motor.FlagPower==1)
+					{
+					JspOut0_OFF;			
+					}	
+								
 								
 			if(FlagInputZero>0)	FlagInputZero--;
 				
@@ -1281,8 +1306,8 @@ SendParamBuf();
 
 
 	len		=	PutString("&ED,",buf,5);								//head 4
-	len		+=	MakeValAsc8("I1=",gpParam->bCurrentForward,",",&buf[len]);	//
-	len		+=	MakeValAsc8("I2=",gpParam->bCurrentBackward,",",&buf[len]);	//
+	len		+=	MakeValAsc8("I1=",CURRENT_FORWARD,",",&buf[len]);	//
+	len		+=	MakeValAsc8("I2=",CURRENT_BACKWARD,",",&buf[len]);	//
 	len		+=	MakeValAsc8("k=",gpParam->bCurrentRate,",",&buf[len]);	//
 	
 	#if CONFIG_433SG || CONFIG_CC1100
@@ -1346,7 +1371,7 @@ void AutoSend(void)
 	//len		+=	MakeValAsc8("9=",bExCurrentBackwardPer94,",",&buf[len]);	//比较电流100ma
 	//len		+=	MakeValAsc8("7=",bExCurrentBackwardPer85,",",&buf[len]);	//比较电流100ma
 	
-	//gpParam->bCurrentForward
+	//CURRENT_FORWARD
 	len		+=	PutString("In=",&buf[len],5);
 	/*
 	buf[len]=HexToAsc(InputBuf>>4);
@@ -1438,11 +1463,123 @@ SendText_UART2(buf);
 }
 #endif
 
+
+
+void LedContral(void)  //10ms
+{
+	static uchar tim1,tim2;
+	
+	uchar TimeCQ;
+		
+				if(Time_LedRecv_LED>0)
+						{
+							Time_LedRecv_LED--;
+							#if Config_Al_Box					
+								if(K4_LVL)
+										{
+											LED_Fe_Box;  //信号时候暗
+										}
+							else{
+											LED_Al_Box;  //信号时候亮
+									}
+							#endif
+										
+						}
+				else{
+							#if Config_Al_Box					
+								if(K4_LVL)
+										{//跳线不连接表示铝箱体
+											LED_Al_Box;  //平常时候亮
+										}
+							else{//跳线连接表示铁箱体
+											LED_Fe_Box;  //平常时候暗
+									}
+							#endif					
+							}		
+						
+//#if CONFIG_433SG						
+//				if(Time_TestProc_LED1>0)
+//						{
+//							Time_TestProc_LED1--;
+//							if(Time_TestProc_LED1==0)
+//									{
+//										TestProc_LED1_OFF;	
+//									}
+//						}
+//				if(Time_TestProc_LED2>0)
+//						{
+//							Time_TestProc_LED2--;
+//							if(Time_TestProc_LED2==0)
+//										{
+//											TestProc_LED2_OFF;	
+//										}
+//						}
+//		
+//#endif
+
+				if(Motor.FlagRuning==2)
+							TimeCQ=150;		//放松 1.5s闪烁
+				else  TimeCQ=30;		//顶进 300ms闪烁
+				
+				
+				tim1++;
+				if(tim1>TimeCQ)
+					{tim1=0;
+
+						//if((TimeDebug>0)||(FlagSetCurrent1!=0))
+						if(TimeDebug>0)	
+								{
+								AutoSend();
+								}
+
+					if((Motor.FlagRuning>3)||(SetIdTime>0)||(Motor.FlagPower>0))
+									{
+									LED_RUN_ON;	//SetLed1
+									}
+					//if(Motor.FlagRuning!=0)
+						if(Motor.CurrentType!=0)
+							{
+							SendToRemot(RESPONES_RUNING);	
+							}
+						
+						
+					}
+				else if(tim1>15)
+					{
+						if((Motor.FlagRuning>3)||(SetIdTime>0)||(Motor.FlagPower<3))
+										{
+											LED_RUN_OFF;
+										}
+					}
+/////////////////////////////
+		if((chAdc_Resoult7<53)&&(chAdc_Resoult7>47))
+					{
+					LED_CURRENT_ON;	
+					}
+		else if(FlagSetCurrent1!=0)
+						{
+						tim2++;
+						if(tim2>20)
+									{
+										tim2=0;
+										LED_CURRENT_OFF;
+									}
+						else if(tim2>8)
+									{
+									LED_CURRENT_ON;
+									}
+						}
+			else{
+						LED_CURRENT_OFF;
+					}
+}
+
+
 /////
 void Work(void)
 {
-	static uchar tim;
-	uchar tim4;
+
+	
 		if(bTimeBase)	//程序时间到标记	10ms
 				{	
 				bTimeBase=0;
@@ -1467,52 +1604,8 @@ void Work(void)
 				LedContral();
 	
 				//chAdc_Resoult7
-				if(Motor.FlagRuning==2)
-							tim4=150;		//放松 1.5s闪烁
-				else  tim4=30;		//顶进 300ms闪烁
-				
-				
-				tim++;
-				if(tim>tim4)
-					{tim=0;
 
-						//if((TimeDebug>0)||(FlagSetCurrent1!=0))
-						if(TimeDebug>0)	
-								{
-								AutoSend();
-								}
-
-					if((Motor.FlagRuning!=0)||(SetIdTime>0)||(Motor.FlagPower>0))
-									{
-									LED_RUN_ON;	//SetLed1
-									}
-					//if(Motor.FlagRuning!=0)
-						if(Motor.CurrentType!=0)
-							{
-							SendToRemot(RESPONES_RUNING);	
-							}
-						
-						
-					}
-				else if(tim>15)
-					{
-						if((Motor.FlagRuning!=0)||(SetIdTime>0)||(Motor.FlagPower==0))
-										{
-											LED_RUN_OFF;
-										}
-					}
-//#if Config_Al_Box					
-//
-//					if(K4_LVL)
-//								{
-//									//SetLed2;	//跳线不连接表示铝箱体
-//									LED_Al_Box;
-//								}
-//				else{
-//								//ClrLed2;	//跳线连接表示铁箱体
-//								LED_Fe_Box;
-//						}
-//#endif				
+		
 				
 				}
 }
