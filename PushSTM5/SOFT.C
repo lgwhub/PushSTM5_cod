@@ -792,7 +792,7 @@ void ProcessKey(uchar in,uchar old)
 		if( (in&BIT0)!=(old&BIT0) )	//ÊÇ±ßÑØ
 			{
 				if((in&BIT0)==0)
-					{	//k1
+					{	//k1   	//S3   ADC2 PB2
 							if(Motor.FlagRuning!=1)
 							{
 								Motor.FlagRuning=0;
@@ -887,14 +887,16 @@ void ProcessKey(uchar in,uchar old)
 /////
 void CheckKey(void)		//ÖÜÆÚ10ms
 {
-		/*
+		
+		//S3   ADC2 PB2
 				if(K1_LVL)
 						KeybyteCur	|=	BIT0;
 				else	KeybyteCur	&=	(~BIT0);
-				if(K2_LVL)
+/*				
+	if(K2_LVL)
 						KeybyteCur	|=	BIT1;
 				else	KeybyteCur	&=	(~BIT1);
-				*/
+*/				
 				if(K3_LVL)
 						KeybyteCur	|=	BIT2;
 				else	KeybyteCur	&=	(~BIT2);
@@ -1474,7 +1476,8 @@ void Work(void)
 				if(tim>tim4)
 					{tim=0;
 
-						if((TimeDebug>0)||(FlagSetCurrent1!=0))
+						//if((TimeDebug>0)||(FlagSetCurrent1!=0))
+						if(TimeDebug>0)	
 								{
 								AutoSend();
 								}

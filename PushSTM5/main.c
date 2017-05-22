@@ -12,7 +12,7 @@ void ADC_Config(void);
 void  PwmConfig_TIM1(void);
 void TIM4_Config(void);	//配置TIM4每1MS产生一个更新中断
 
-unsigned short int AdcBuf[2+2];
+unsigned char AdcBuf[2+2];
 uchar chAdc_Resoult6;
 uchar chAdc_Resoult7;
 
@@ -151,7 +151,7 @@ uchar xxx;
 			//temp16=((Adc.sum7>>4)*33)>>8;	//(UINT=100mA)
 			//temp16=((Adc.sum7>>4)*330)>>8;	//(UINT=10mA) max=1980mA
 			//temp16=(Adc.sum[7]>>4);				//Big Error   Adc.sum范围为6-7
-			temp16=AdcBuf[0]>>8;	//电流  左对齐，取高位
+			temp16=AdcBuf[0];	//电流  左对齐，取高位
 			if(FlagSetCurrent1==2)
 					{//10A,显示50
 				if(temp16>25)		//相当于RATE<256
@@ -180,26 +180,27 @@ void LedStart(void)   /* 启动时指示灯闪烁  */
 {
 
 	uchar i;
-	ClrLed1;
-	ClrLed2;
+
 	for(i=0;i<3;i++)
 	{
-		DelayMs(100);
+		
 		SetLed1;
 		ClrLed2;
-
+		ClrLed3;
 		
 		DelayMs(50);
 		ClrLed1;
 		SetLed2;
-
-		
+		SetLed3;
+		DelayMs(100);
 		RstWdog();
 	}
 
 
 ClrLed1;
 ClrLed2;
+ClrLed3;
+
 }
 
 void InitOutLevelDefault(void)
@@ -219,7 +220,13 @@ main()
 gpParam=(struct	struct_save	*)&gbParamBuf[0];		//参数结构的指针	
 	
 	InitOutLevelDefault();
+	
+	
+InitAverage(AvergeBuf1);
+AvergeOffset[0]=0;
 
+InitAverage(AvergeBuf2);
+AvergeOffset[1]=0;
 
 	Default_ParamInit();	//Init_Param();
 	
@@ -248,6 +255,17 @@ Load_Param();		//取设定值
 	// 允许CPU全局中断
 	enableInterrupts();   
 	
+	//while(1){};
+	
+//#if CONFIG_CC1100
+cc1100Initializtion();
+//#elif CONFIG_433SG
+//InitDecode();
+//#endif	
+	
+	
+	
+	
 if(K5_LVL==0)
 		{
 			DelayMs(5);
@@ -272,15 +290,11 @@ if(K5_LVL==0)
 		}		
 RstWdog();
 		
-//#if CONFIG_CC1100
-cc1100Initializtion();
 
 
 LedStart();   /* 启动时指示灯闪烁  */
 JspOut0_ON;
-//#elif CONFIG_433SG
-//InitDecode();
-//#endif		
+		
 
 RstWdog();
 

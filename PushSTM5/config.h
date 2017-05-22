@@ -36,10 +36,8 @@
 
 //3.3V参考下电流测量比例
 //gpParam->bCurrentRate ( 200 - 220 )
-#define CURRENT_RATE	(114)
-//#define CURRENT_RATE	(206+24)
-//#define CURRENT_RATE	(206+34)
-//#define CURRENT_RATE	(206*50/33)
+//#define CURRENT_RATE	(114)
+#define CURRENT_RATE	(168)
 //gpParam->bCurrentRate=CURRENT_RATE;			//电机3的 5A
 
 //电机正转顶紧的设定值，最大值为127  18A   max=256*75%=192

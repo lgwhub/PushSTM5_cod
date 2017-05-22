@@ -19,6 +19,9 @@
 
 #include "soft.h"
 
+
+#include "GetAverage.h"
+
 #include "CC1100.h"
 
 #if CONFIG_433SG

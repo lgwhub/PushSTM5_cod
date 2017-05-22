@@ -479,13 +479,15 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
     unsigned char i;
    if (ADC1_GetITStatus(ADC1_IT_EOC) != RESET) { 
    	
-   for(i=0;i<2;i++)
-   			{
-   			AdcBuf[i]=ADC1_GetBufferValue(i);
-   	
-  			}
-
-	
+//   for(i=0;i<2;i++)
+//   			{
+//   			AdcBuf[i]=ADC1_GetBufferValue(i);
+//   	
+//  			}
+i=(uchar)(ADC1_GetBufferValue(0)>>8);
+AdcBuf[0]=GetAverage(AvergeBuf1,AvergeOffset,i);
+i=(uchar)(ADC1_GetBufferValue(1)>>8);
+AdcBuf[1]=GetAverage(AvergeBuf2,&AvergeOffset[1],i);	
    	ADC1_ClearITPendingBit(ADC1_IT_EOC);
 		//ADC1_Init(ADC1_CONVERSIONMODE_SINGLE,ADC1_CHANNEL_9,ADC1_PRESSEL_FCPU_D18,ADC1_EXTTRIG_TIM,DISABLE,ADC1_ALIGN_RIGHT, ADC1_SCHMITTTRIG_CHANNEL9, DISABLE);
 		ADC1_StartConversion();

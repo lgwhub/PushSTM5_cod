@@ -19,7 +19,7 @@ void AdcProcess(void);
 extern uchar chAdc_Resoult6;
 extern uchar chAdc_Resoult7;
 
-extern unsigned short int AdcBuf[2+2];
+extern unsigned char AdcBuf[2+2];
 
 
 
