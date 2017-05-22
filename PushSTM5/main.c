@@ -209,10 +209,12 @@ else {
 		SetLed1;
 		ClrLed2;
 		
-		DelayMs(20);
+		//DelayMs(20);
+		DelayMs(10);
 		ClrLed1;
 		SetLed2;
-		DelayMs(50);
+		//DelayMs(50);
+		DelayMs(10);
 		RstWdog();
 	}
 //////////////////////////////////	
@@ -222,10 +224,11 @@ else {
 
 		ClrLed3;
 		
-		DelayMs(20);
-
+		//DelayMs(20);
+DelayMs(10);
 		SetLed3;
-		DelayMs(30);
+		//DelayMs(30);
+		DelayMs(10);
 		RstWdog();
 	}
 //////////////////////////////////	
@@ -279,7 +282,7 @@ AvergeOffset[1]=0;
 	Default_ParamInit();	//Init_Param();
 	
 
-	IWDG_Config();
+	//IWDG_Config();
 	
 
 Load_Param();		//取设定值
@@ -336,6 +339,8 @@ if(K5_LVL==0)
 						}
 
 		}		
+		
+	//IWDG_Config();		
 RstWdog();
 		
 
